@@ -1,0 +1,71 @@
+const amqplib=require('amqplib')
+const {EXCHANGE_NAME,MESSAGE_BROKER_URL}=require('../config/serverConfig.js')
+
+const createChannel=async ()=>{
+   try {
+     const connection=await amqplib.connect(MESSAGE_BROKER_URL)
+ 
+     const channel=await await connection.createChannel()
+ 
+ 
+     await channel.assertExchange(EXCHANGE_NAME,'direct',false);
+ 
+     return channel
+ 
+   } catch (error) {
+
+        throw error
+
+   }
+
+
+
+}
+
+
+
+
+const subscribedMessage= async(channel,service,bindingKey)=>{
+
+   try {
+     const applicationQueue= await channel.assertQueue('QUEUE_NAME')
+ 
+ 
+     channel.bindQueue(applicationQueue.queue,EXCHANGE_NAME,bindingKey)
+ 
+ 
+     channel.consume(applicationQueue.queue, msg=>{
+ 
+         console.log("recieved data");
+         console.log(msg.content.toString());
+         
+         channel.ack(msg)
+         
+ 
+     })
+ 
+   } catch (error) {
+        throw error
+   }
+}
+
+const publishedMessage =async (channel,bindingKey,message) =>{
+
+    try {
+        await channel.assertQueue('QUEUE_NAME')
+        await channel.publish(EXCHANGE_NAME,bindingKey,Buffer.from(message))
+
+    } catch (error) {
+        
+        throw error
+
+    }
+
+
+}
+
+module.exports={
+    subscribedMessage,
+    createChannel,
+    publishedMessage
+}

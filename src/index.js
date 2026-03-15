@@ -4,7 +4,7 @@ const bodyParser=require('body-parser')
 
 const app=express();
 
-const {PORT}=require('./config/serverConfig.js');
+const {PORT,FLIGHT_SERVICE_PATH}=require('./config/serverConfig.js');
 const apiRoutes=require('./Routes/index.js')
 const db=require('../models/index.js')
 const setupAndStartServer=()=>{
@@ -26,7 +26,8 @@ const setupAndStartServer=()=>{
 
 
 
-
+      
+        
 
     })
 
